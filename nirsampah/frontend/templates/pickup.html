@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Penjemputan Sampah{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <p class="page-header__eyebrow">Layanan Penjemputan</p>
+  <h1 class="page-header__title">Penjemputan Sampah</h1>
+  <p class="page-header__desc">Ajukan permintaan penjemputan sampah langsung dari rumahmu.</p>
+</div>
+
+<!-- STATUS FLOW -->
+<div class="status-flow">
+  {% for step in status_flow %}
+  <div class="status-flow__item">
+    <div class="status-flow__dot">{{ loop.index }}</div>
+    <span class="status-flow__label">{{ step }}</span>
+  </div>
+  {% if not loop.last %}<div class="status-flow__line"></div>{% endif %}
+  {% endfor %}
+</div>
+
+{% if success %}
+<div class="alert alert--success">
+  <span class="alert__icon">✅</span>
+  <div>
+    <strong>{{ success }}</strong>
+    {% if new_request %}
+    <p style="margin-top:.3rem;font-size:.88rem;">
+      Jadwal: <strong>{{ new_request.jadwal_penjemputan }}</strong> &bull;
+      Status: <span class="badge badge--waiting">{{ new_request.status }}</span>
+    </p>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert--error"><span class="alert__icon">⚠</span> {{ error }}</div>
+{% endif %}
+
+<!-- FORM -->
+<div class="form-section pickup-form-wrap">
+  <div class="card-form">
+    <h2 class="pickup-form__title">Formulir Pengajuan Penjemputan</h2>
+    <form method="POST" action="{{ url_for('pickup') }}">
+      <div class="form__group">
+        <label class="form__label" for="nama">Nama Lengkap <span class="form__required">*</span></label>
+        <input class="form__input" type="text" id="nama" name="nama"
+               placeholder="Nama lengkap pemohon"
+               value="{{ form_data.get('nama','') }}" required/>
+      </div>
+      <div class="form__group">
+        <label class="form__label" for="alamat">Alamat Lengkap <span class="form__required">*</span></label>
+        <textarea class="form__input form__textarea" id="alamat" name="alamat" rows="3"
+                  placeholder="Jl. Pelabuhan II No. 12, Kelurahan Gunung Parang, Sukabumi"
+                  required>{{ form_data.get('alamat','') }}</textarea>
+      </div>
+      <div class="form__row">
+        <div class="form__group">
+          <label class="form__label" for="nomor_telepon">Nomor Telepon <span class="form__required">*</span></label>
+          <input class="form__input" type="tel" id="nomor_telepon" name="nomor_telepon"
+                 placeholder="081234567890"
+                 value="{{ form_data.get('nomor_telepon','') }}" required/>
+        </div>
+        <div class="form__group">
+          <label class="form__label" for="jenis_sampah">Jenis Sampah <span class="form__required">*</span></label>
+          <select class="form__input form__select" id="jenis_sampah" name="jenis_sampah" required>
+            <option value="" disabled {% if not form_data.get('jenis_sampah') %}selected{% endif %}>Pilih Jenis</option>
+            {% for opt in jenis_options %}
+            <option value="{{ opt }}" {% if form_data.get('jenis_sampah')==opt %}selected{% endif %}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form__group">
+        <label class="form__label" for="jadwal">Jadwal Penjemputan <span class="form__required">*</span></label>
+        <select class="form__input form__select" id="jadwal" name="jadwal" required>
+          <option value="" disabled {% if not form_data.get('jadwal') %}selected{% endif %}>Pilih Jadwal</option>
+          {% for slot in available_slots %}
+          <option value="{{ slot }}" {% if form_data.get('jadwal')==slot %}selected{% endif %}>{{ slot }}</option>
+          {% endfor %}
+        </select>
+        <p class="form__hint">Jadwal final akan dikonfirmasi via nomor telepon yang didaftarkan.</p>
+      </div>
+      <button class="btn btn--primary btn--full pickup-submit" type="submit">Ajukan Penjemputan</button>
+    </form>
+  </div>
+</div>
+
+<!-- INFO CARDS -->
+<div class="pickup-info-grid">
+  <div class="pickup-info-card"><div class="pickup-info-card__icon">🌱</div><h3>Organik</h3><p>Sisa makanan & daun. Diproses menjadi kompos.</p></div>
+  <div class="pickup-info-card"><div class="pickup-info-card__icon">🔵</div><h3>Anorganik</h3><p>Plastik, kaca & logam. Disortir ke daur ulang.</p></div>
+  <div class="pickup-info-card"><div class="pickup-info-card__icon">⚠️</div><h3>B3</h3><p>Baterai & obat kedaluwarsa. Petugas tersertifikasi.</p></div>
+  <div class="pickup-info-card"><div class="pickup-info-card__icon">🔄</div><h3>Campuran</h3><p>Petugas akan memilah di lokasi penjemputan.</p></div>
+</div>
+
+<!-- DAFTAR PERMINTAAN SAYA -->
+{% if all_requests %}
+<section class="pickup-list" id="daftar-permintaan">
+  <h2 class="section-title">Permintaan Penjemputanku</h2>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr><th>#ID</th><th>Nama</th><th>Alamat</th><th>Telepon</th><th>Jenis</th><th>Jadwal</th><th>Status</th><th>Waktu</th><th>Ubah Status</th></tr>
+      </thead>
+      <tbody>
+        {% for r in all_requests %}
+        <tr>
+          <td><strong>#{{ r.id }}</strong></td>
+          <td>{{ r.nama }}</td>
+          <td class="td--address">{{ r.alamat }}</td>
+          <td class="td--coord">{{ r.nomor_telepon }}</td>
+          <td>
+            {% if r.jenis_sampah=="Organik" %}<span class="badge badge--organic">🌱 {{ r.jenis_sampah }}</span>
+            {% elif r.jenis_sampah=="Anorganik" %}<span class="badge badge--inorganic">🔵 {{ r.jenis_sampah }}</span>
+            {% elif "B3" in r.jenis_sampah %}<span class="badge badge--hazardous">⚠️ B3</span>
+            {% else %}<span class="badge badge--mixed">🔄 {{ r.jenis_sampah }}</span>{% endif %}
+          </td>
+          <td class="td--slot">{{ r.jadwal_penjemputan }}</td>
+          <td>
+            {% if r.status=="Menunggu Konfirmasi" %}<span class="status-badge status-badge--waiting">⏳ {{ r.status }}</span>
+            {% elif r.status=="Dikonfirmasi" %}<span class="status-badge status-badge--confirmed">✅ {{ r.status }}</span>
+            {% elif r.status=="Dalam Penjemputan" %}<span class="status-badge status-badge--onway">🚛 {{ r.status }}</span>
+            {% elif r.status=="Selesai" %}<span class="status-badge status-badge--done">🎉 {{ r.status }}</span>
+            {% else %}<span class="status-badge status-badge--cancelled">❌ {{ r.status }}</span>{% endif %}
+          </td>
+          <td class="td--time">{{ r.created_at }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('pickup_update', request_id=r.id) }}" class="status-form">
+              <select class="form__input form__select status-select" name="status">
+                <option value="Menunggu Konfirmasi" {% if r.status=="Menunggu Konfirmasi" %}selected{% endif %}>⏳ Menunggu</option>
+                <option value="Dikonfirmasi"        {% if r.status=="Dikonfirmasi"        %}selected{% endif %}>✅ Dikonfirmasi</option>
+                <option value="Dalam Penjemputan"   {% if r.status=="Dalam Penjemputan"   %}selected{% endif %}>🚛 Dijemput</option>
+                <option value="Selesai"             {% if r.status=="Selesai"             %}selected{% endif %}>🎉 Selesai</option>
+                <option value="Dibatalkan"          {% if r.status=="Dibatalkan"          %}selected{% endif %}>❌ Batal</option>
+              </select>
+              <button class="btn btn--sm btn--primary" type="submit">Simpan</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

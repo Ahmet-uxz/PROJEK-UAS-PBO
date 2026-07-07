@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Daftar – Smart Waste Classifier{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-box">
+    <div class="auth-box__logo">♻</div>
+    <h1 class="auth-box__title">Buat Akun Baru</h1>
+    <p class="auth-box__sub">Daftar gratis dan mulai kelola sampahmu dengan lebih mudah</p>
+
+    {% if error %}
+    <div class="alert alert--error" style="margin-bottom:1rem;">
+      <span class="alert__icon">⚠</span> {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('register') }}">
+      <div class="form__group">
+        <label class="form__label" for="username">Username <span class="form__required">*</span></label>
+        <input class="form__input" type="text" id="username" name="username"
+               placeholder="Min. 3 karakter" value="{{ form_data.get('username','') }}" required/>
+      </div>
+      <div class="form__group">
+        <label class="form__label" for="email">Email <span class="form__required">*</span></label>
+        <input class="form__input" type="email" id="email" name="email"
+               placeholder="contoh@email.com" value="{{ form_data.get('email','') }}" required/>
+      </div>
+      <div class="form__row">
+        <div class="form__group">
+          <label class="form__label" for="password">Password <span class="form__required">*</span></label>
+          <input class="form__input" type="password" id="password" name="password"
+                 placeholder="Min. 6 karakter" required/>
+        </div>
+        <div class="form__group">
+          <label class="form__label" for="confirm_password">Konfirmasi Password <span class="form__required">*</span></label>
+          <input class="form__input" type="password" id="confirm_password" name="confirm_password"
+                 placeholder="Ulangi password" required/>
+        </div>
+      </div>
+      <button class="btn btn--primary btn--full" style="margin-top:.5rem" type="submit">Buat Akun</button>
+    </form>
+
+    <hr class="auth-box__divider"/>
+    <p class="auth-box__footer">
+      Sudah punya akun? <a href="{{ url_for('login') }}">Masuk di sini</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

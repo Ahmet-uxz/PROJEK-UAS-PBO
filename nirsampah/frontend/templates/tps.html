@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Cari TPS{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <p class="page-header__eyebrow">Cari TPS</p>
+  <h1 class="page-header__title">Temukan TPS Terdekat</h1>
+  <p class="page-header__desc">Masukkan nama kota untuk menemukan lokasi TPS via peta interaktif OpenStreetMap.</p>
+</div>
+
+<div class="form-section">
+  <div class="card-form">
+    <form method="POST" action="{{ url_for('tps') }}">
+      <div class="form__group">
+        <label class="form__label" for="city">Nama Kota</label>
+        <input class="form__input" type="text" id="city" name="city"
+               placeholder="Contoh: Sukabumi, Jakarta, Bandung..."
+               value="{{ city_input }}" required/>
+      </div>
+      <div class="form__examples">
+        <span class="form__examples-label">Contoh:</span>
+        <a class="example-tag" href="{{ url_for('tps') }}?city=Sukabumi">Sukabumi</a>
+        <a class="example-tag" href="{{ url_for('tps') }}?city=Jakarta">Jakarta</a>
+        <a class="example-tag" href="{{ url_for('tps') }}?city=Bandung">Bandung</a>
+        <a class="example-tag" href="{{ url_for('tps') }}?city=Surabaya">Surabaya</a>
+        <a class="example-tag" href="{{ url_for('tps') }}?city=Medan">Medan</a>
+      </div>
+      <button class="btn btn--primary btn--full" type="submit">Cari TPS</button>
+    </form>
+  </div>
+</div>
+
+{% if error %}
+<div class="alert {% if locations %}alert--info{% else %}alert--error{% endif %}">
+  <span class="alert__icon">{% if locations %}ℹ{% else %}⚠{% endif %}</span> {{ error }}
+</div>
+{% endif %}
+
+{% if locations %}
+<section class="tps-results">
+  <h2 class="section-title">
+    {% if error %}Ditemukan {{ locations|length }} lokasi terkait{% else %}Ditemukan {{ locations|length }} lokasi TPS{% endif %}
+    di <em>{{ city_input }}</em>
+  </h2>
+
+  <div id="tps-map" class="tps-map" data-locations='{{ locations|tojson|safe }}' role="img" aria-label="Peta lokasi TPS">
+    <p class="tps-map__placeholder">Memuat peta…</p>
+  </div>
+  <p class="tps-map-hint">Klik baris tabel untuk fokus ke lokasi di peta.</p>
+
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Nama Lokasi</th><th>Alamat</th><th>Latitude</th><th>Longitude</th></tr></thead>
+      <tbody>
+        {% for loc in locations %}
+        <tr data-row-index="{{ loop.index0 }}" class="tps-row-clickable">
+          <td>{{ loop.index }}</td>
+          <td><strong>{{ loc.name }}</strong></td>
+          <td class="td--address">{{ loc.address }}</td>
+          <td class="td--coord">{{ "%.6f"|format(loc.latitude) }}</td>
+          <td class="td--coord">{{ "%.6f"|format(loc.longitude) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="tps-note">Data bersumber dari <strong>Nominatim OpenStreetMap</strong>.</p>
+</section>
+{% elif not error %}
+<div class="info-box">
+  <div class="info-box__icon">🗺</div>
+  <h3>Cara Menggunakan</h3>
+  <ol class="info-box__list">
+    <li>Masukkan nama kota (mis. <em>Sukabumi</em>).</li>
+    <li>Klik tombol <strong>Cari TPS</strong>.</li>
+    <li>Peta interaktif akan menampilkan lokasi TPS.</li>
+    <li>Klik baris tabel untuk fokus ke lokasi tersebut.</li>
+  </ol>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+{% if locations %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endif %}
+{% endblock %}

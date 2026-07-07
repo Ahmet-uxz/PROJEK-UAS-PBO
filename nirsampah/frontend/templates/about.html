@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Tentang – Smart Waste Classifier{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <p class="page-header__eyebrow">Tentang Kittttta</p>
+  <h1 class="page-header__title">NIRSAMPAH</h1>
+  <p class="page-header__desc">Sistem Klasifikasi Sampah</p>
+</div>
+
+<!-- TIM KAMI -->
+<section class="about-section">
+  <h2 class="about-section__title">Tim Hore (Kelompok 1)</h2>
+  <div class="team-grid">
+    <div class="team-member">
+      <img class="team-member__photo"
+           src="{{ url_for('static', filename='img/team/ahmet13.jpg') }}" alt="Anggota 1"/>
+      <p class="team-member__name">Ahmat</p>
+      <p class="team-member__role">Motto Hidup: Hidup seperti Larry </p>
+    </div>
+    <div class="team-member">
+      <img class="team-member__photo"
+           src="{{ url_for('static', filename='img/team/hildan12.jpg') }}" alt="Anggota 2"/>
+      <p class="team-member__name">Hildan</p>
+      <p class="team-member__role">Motto Hidup: Jika orang lain bisa melakukannya, kenapa harus kamu yang repot</p>
+    </div>
+    <div class="team-member">
+      <img class="team-member__photo"
+           src="{{ url_for('static', filename='img/team/sahanya.jpg') }}" alt="Anggota 3"/>
+      <p class="team-member__name">Fauzan</p>
+      <p class="team-member__role">Motto Hidup: Jangan hidup seperti newton, kebanyakan gaya</p>
+    </div>
+  </div>
+</section>
+
+<!-- DESKRIPSI -->
+<section class="about-section">
+  <h2 class="about-section__title">Deskripsi Proyek</h2>
+  <p>
+    <strong>NIRSAMPAH</strong> adalah sistem berbasis web yang membantu masyarakat
+    mengidentifikasi jenis sampah secara cepat dan akurat. Dengan hanya mengetikkan nama sampah,
+    pengguna langsung mendapat informasi kategori (organik, anorganik, atau B3) beserta panduan
+    penanganan yang tepat. Selain klasifikasi, website ini juga menyediakan layanan penjemputan
+    sampah sehingga pengguna dapat langsung mengajukan permintaan tanpa perlu mengantar sendiri ke TPS.
+  </p>
+</section>
+
+<!-- LATAR BELAKANG -->
+<section class="about-section">
+  <h2 class="about-section__title">Latar Belakang</h2>
+  <p>
+    Banyak masyarakat masih kesulitan membedakan jenis sampah yang mereka miliki sehingga proses
+    daur ulang dan pengelolaan sampah menjadi tidak optimal. Masyarakat juga sering tidak mengetahui
+    lokasi TPS terdekat dan kerap kesulitan menjadwalkan pengangkutan sampah dari rumah masing masing.
+    Website ini hadir untuk menjawab permasalahan tersebut, Mulai dari klasifikasi, pencarian TPS,
+    jadwal pengangkutan, hingga layanan penjemputan langsung ke lokasi pengguna.
+  </p>
+</section>
+
+<!-- TUJUAN -->
+<section class="about-section">
+  <h2 class="about-section__title">Tujuan Proyek</h2>
+  <ul class="about-list">
+    <li>Membantu masyarakat mengidentifikasi jenis sampah dengan mudah.</li>
+    <li>Memberikan panduan penanganan sampah yang benar berdasarkan kategorinya.</li>
+    <li>Memudahkan pencarian lokasi TPS terdekat melalui peta interaktif.</li>
+    <li>Menampilkan jadwal pengangkutan sampah per wilayah secara terstruktur.</li>
+    <li>Menyediakan layanan penjemputan sampah langsung dari rumah pengguna.</li>
+    <li>Menyimpan riwayat klasifikasi dan permintaan penjemputan ke database.</li>
+  </ul>
+</section>
+
+{% endblock %}

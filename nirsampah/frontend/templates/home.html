@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Smart Waste Classifier – Beranda{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__text">
+    <span class="hero__eyebrow">♻ Kelola, Pilah, dan Jemput Sampahmu dengan Mudah</span>
+    <h1 class="hero__title">Kenali Sampahmu,<br><span>Jaga Bumi Kita</span></h1>
+    <p class="hero__desc">
+      Identifikasi jenis sampah secara instan, temukan TPS terdekat di kotamu,
+      dan ajukan penjemputan sampah langsung dari rumah.
+    </p>
+    <div class="hero__cta">
+      <a href="{{ url_for('classify') }}" class="btn btn--primary">Mulai Klasifikasi</a>
+      {% if current_user %}
+      <a href="{{ url_for('pickup') }}" class="btn btn--outline">Ajukan Penjemputan</a>
+      {% else %}
+      <a href="{{ url_for('register') }}" class="btn btn--outline">Daftar Gratis</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="hero__visual" aria-hidden="true">
+    <div class="hero__blob">
+      <div class="hero__icons">
+        <div class="hero__icon-card">🌱<span>Organik</span></div>
+        <div class="hero__icon-card">🔵<span>Anorganik</span></div>
+        <div class="hero__icon-card">⚠️<span>B3</span></div>
+        <div class="hero__icon-card">🚛<span>Jemput</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <h2 class="section-title">Apa yang bisa kami bantu?</h2>
+  <div class="features__grid">
+
+    <div class="feature-card feature-card--organic">
+      <div class="feature-card__icon">🌱</div>
+      <h3>Sampah Organik</h3>
+      <p>Sisa makanan, daun, dan bahan alami yang dapat terurai & dikompos.</p>
+    </div>
+
+    <div class="feature-card feature-card--inorganic">
+      <div class="feature-card__icon">🔵</div>
+      <h3>Sampah Anorganik</h3>
+      <p>Plastik, kaca, logam — sulit terurai tapi dapat didaur ulang kembali.</p>
+    </div>
+
+    <div class="feature-card feature-card--hazardous">
+      <div class="feature-card__icon">⚠️</div>
+      <h3>Sampah B3</h3>
+      <p>Bahan Berbahaya & Beracun yang memerlukan penanganan khusus & aman.</p>
+    </div>
+
+    <a href="{{ url_for('tps') }}" class="feature-card feature-card--location feature-card--link">
+      <div class="feature-card__icon">📍</div>
+      <h3>Cari TPS</h3>
+      <p>Temukan Tempat Pembuangan Sampah terdekat di kotamu via peta interaktif.</p>
+    </a>
+
+    <a href="{{ url_for('pickup') }}" class="feature-card feature-card--pickup feature-card--link">
+      <div class="feature-card__icon">🚛</div>
+      <h3>Penjemputan Sampah</h3>
+      <p>Ajukan penjemputan langsung dari rumahmu — mudah, cepat, terpercaya.</p>
+    </a>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works">
+  <h2 class="section-title">Cara Menggunakan</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step__num">1</div>
+      <div class="step__text">
+        <h3>Masukkan Nama Sampah</h3>
+        <p>Ketik nama barang atau sampah yang ingin diklasifikasikan.</p>
+      </div>
+    </div>
+    <div class="step__arrow">→</div>
+    <div class="step">
+      <div class="step__num">2</div>
+      <div class="step__text">
+        <h3>Dapatkan Klasifikasi</h3>
+        <p>Sistem menentukan kategori dan cara penanganan yang tepat.</p>
+      </div>
+    </div>
+    <div class="step__arrow">→</div>
+    <div class="step">
+      <div class="step__num">3</div>
+      <div class="step__text">
+        <h3>Buang atau Ajukan Jemput</h3>
+        <p>Buang di TPS terdekat atau minta penjemputan ke rumahmu.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

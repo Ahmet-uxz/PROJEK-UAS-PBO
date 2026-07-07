@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Klasifikasi Sampah{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <p class="page-header__eyebrow">Klasifikasi Sampah</p>
+  <h1 class="page-header__title">Kenali Jenis Sampahmu</h1>
+  <p class="page-header__desc">Masukkan nama sampah untuk mengetahui jenis dan cara penanganan yang benar.</p>
+</div>
+
+<div class="form-section">
+  <div class="card-form">
+    <form method="POST" action="{{ url_for('classify') }}">
+      <div class="form__group">
+        <label class="form__label" for="waste_name">Nama Sampah</label>
+        <input class="form__input" type="text" id="waste_name" name="waste_name"
+               placeholder="Contoh: Botol Plastik, Kulit Pisang, Baterai Bekas..."
+               value="{{ waste_name_input }}" required/>
+      </div>
+      <div class="form__examples">
+        <span class="form__examples-label">Contoh:</span>
+        <a class="example-tag" href="{{ url_for('classify') }}?q=Botol+Plastik">Botol Plastik</a>
+        <a class="example-tag" href="{{ url_for('classify') }}?q=Kulit+Pisang">Kulit Pisang</a>
+        <a class="example-tag" href="{{ url_for('classify') }}?q=Baterai+Bekas">Baterai Bekas</a>
+        <a class="example-tag" href="{{ url_for('classify') }}?q=Daun+Kering">Daun Kering</a>
+        <a class="example-tag" href="{{ url_for('classify') }}?q=Kaleng+Bekas">Kaleng Bekas</a>
+      </div>
+      <button class="btn btn--primary btn--full" type="submit">Klasifikasikan</button>
+    </form>
+  </div>
+</div>
+
+{% if error %}
+<div class="alert alert--error"><span class="alert__icon">⚠</span> {{ error }}</div>
+{% endif %}
+
+{% if result %}
+<div class="result-card result-card--{% if result.category == 'Organik' %}organic{% elif result.category == 'Anorganik' %}anorganik{% else %}b3{% endif %}">
+  <div class="result-card__header">
+    {% if result.category == "Organik" %}
+      <span class="result-badge result-badge--organic">🌱 Organik</span>
+    {% elif result.category == "Anorganik" %}
+      <span class="result-badge result-badge--inorganic">🔵 Anorganik</span>
+    {% else %}
+      <span class="result-badge result-badge--hazardous">⚠️ B3</span>
+    {% endif %}
+    <h2 class="result-card__title">{{ result.name }}</h2>
+  </div>
+  <div class="result-card__body">
+    <div class="result-item"><dt>Kategori</dt><dd>{{ result.category }}</dd></div>
+    <div class="result-item"><dt>Deskripsi</dt><dd>{{ result.description }}</dd></div>
+    <div class="result-item result-item--handling">
+      <dt>Cara Penanganan</dt><dd>{{ result.handling }}</dd>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if history %}
+<section class="history-section">
+  <h2 class="section-title">Riwayat Klasifikasi</h2>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Nama Sampah</th><th>Kategori</th><th>Deskripsi</th><th>Waktu</th></tr></thead>
+      <tbody>
+        {% for row in history %}
+        <tr>
+          <td>{{ row.id }}</td>
+          <td><strong>{{ row.waste_name }}</strong></td>
+          <td>
+            {% if row.category == "Organik" %}<span class="badge badge--organic">🌱 {{ row.category }}</span>
+            {% elif row.category == "Anorganik" %}<span class="badge badge--inorganic">🔵 {{ row.category }}</span>
+            {% else %}<span class="badge badge--hazardous">⚠️ {{ row.category }}</span>{% endif %}
+          </td>
+          <td>{{ row.description }}</td>
+          <td class="td--time">{{ row.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

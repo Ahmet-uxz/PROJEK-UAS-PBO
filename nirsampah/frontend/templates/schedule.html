@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Jadwal Pengangkutan{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <p class="page-header__eyebrow">Jadwal Pengangkutan</p>
+  <h1 class="page-header__title">Jadwal Pengangkutan Sampah</h1>
+  <p class="page-header__desc">Pilih wilayah untuk melihat jadwal pengangkutan sampah organik, anorganik, dan B3.</p>
+</div>
+
+<div class="form-section">
+  <div class="card-form">
+    <form method="POST" action="{{ url_for('schedule') }}">
+      <div class="form__group">
+        <label class="form__label" for="wilayah">Pilih Wilayah</label>
+        <select class="form__input form__select" id="wilayah" name="wilayah" required>
+          <option value="" disabled {% if not wilayah_input %}selected{% endif %}>Pilih Wilayah</option>
+          {% for w in all_wilayah %}
+          <option value="{{ w }}" {% if w == wilayah_input %}selected{% endif %}>{{ w }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button class="btn btn--primary btn--full" type="submit">Lihat Jadwal</button>
+    </form>
+  </div>
+</div>
+
+{% if schedules %}
+<section class="schedule-results">
+  <h2 class="section-title">Jadwal – <em>{{ wilayah_input }}</em></h2>
+  {% set organik_list   = schedules | selectattr("jenis","equalto","Organik")   | list %}
+  {% set anorganik_list = schedules | selectattr("jenis","equalto","Anorganik") | list %}
+  {% set b3_list        = schedules | selectattr("jenis","equalto","B3")        | list %}
+  <div class="sched-summary">
+    {% if organik_list %}
+    <div class="sched-card sched-card--organic">
+      <div class="sched-card__icon">🌱</div>
+      <div><span class="sched-card__label">Organik</span>
+        {% for s in organik_list %}<p class="sched-card__row"><strong>{{ s.hari }}</strong> &bull; {{ s.jam_mulai }}–{{ s.jam_selesai }}</p>{% endfor %}
+      </div>
+    </div>{% endif %}
+    {% if anorganik_list %}
+    <div class="sched-card sched-card--inorganic">
+      <div class="sched-card__icon">🔵</div>
+      <div><span class="sched-card__label">Anorganik</span>
+        {% for s in anorganik_list %}<p class="sched-card__row"><strong>{{ s.hari }}</strong> &bull; {{ s.jam_mulai }}–{{ s.jam_selesai }}</p>{% endfor %}
+      </div>
+    </div>{% endif %}
+    {% if b3_list %}
+    <div class="sched-card sched-card--hazardous">
+      <div class="sched-card__icon">⚠️</div>
+      <div><span class="sched-card__label">B3</span>
+        {% for s in b3_list %}<p class="sched-card__row"><strong>{{ s.hari }}</strong> &bull; {{ s.jam_mulai }}–{{ s.jam_selesai }}</p>{% endfor %}
+      </div>
+    </div>{% endif %}
+  </div>
+  <div class="table-wrapper" style="margin-top:1.5rem">
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Jenis</th><th>Hari</th><th>Mulai</th><th>Selesai</th><th>Keterangan</th></tr></thead>
+      <tbody>
+        {% for s in schedules %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{% if s.jenis=="Organik" %}<span class="badge badge--organic">🌱 {{ s.jenis }}</span>
+              {% elif s.jenis=="Anorganik" %}<span class="badge badge--inorganic">🔵 {{ s.jenis }}</span>
+              {% else %}<span class="badge badge--hazardous">⚠️ {{ s.jenis }}</span>{% endif %}</td>
+          <td><strong>{{ s.hari }}</strong></td>
+          <td class="td--coord">{{ s.jam_mulai }}</td>
+          <td class="td--coord">{{ s.jam_selesai }}</td>
+          <td class="td--address">{{ s.keterangan }}</td>
+        </tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="tps-note" style="margin-top:1rem">Siapkan sampah sebelum jam mulai. Jadwal dapat berubah pada hari libur nasional.</p>
+</section>
+{% elif wilayah_input %}
+<div class="alert alert--error"><span class="alert__icon">⚠</span> Tidak ada jadwal untuk <strong>{{ wilayah_input }}</strong>.</div>
+{% else %}
+<div class="info-box">
+  <div class="info-box__icon">📅</div>
+  <h3>Cara Menggunakan</h3>
+  <ol class="info-box__list">
+    <li>Pilih wilayah dari dropdown.</li>
+    <li>Klik <strong>Lihat Jadwal</strong>.</li>
+    <li>Siapkan sampah sebelum jam mulai pengangkutan.</li>
+  </ol>
+</div>
+{% endif %}
+
+{% endblock %}
